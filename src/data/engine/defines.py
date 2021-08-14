@@ -9,11 +9,13 @@ GAME_DIR = Path(__file__).parents[3]
 SRC_DIR = GAME_DIR / "src"
 DATA_DIR = SRC_DIR / "data"
 ENGINE_DIR = DATA_DIR / "engine"
+IMG_DIR = DATA_DIR / "img"
 SFX_DIR = DATA_DIR / "sfx"
 USERDATA_FILE = ENGINE_DIR / "_userdata.dat"
 
 # LOOP DEFINES
 FPS = 60
+DEBUG_MODE = False
 
 # FONT AND IMAGES DEFINES
 SCALE = 2

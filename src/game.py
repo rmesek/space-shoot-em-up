@@ -6,6 +6,9 @@ import time
 from pygame.locals import *
 
 from data.engine.defines import *
+from data.engine.funcs import (
+    load_img,
+)
 
 os.environ["SDL_VIDEO_CENTERED"] = "1"
 
@@ -40,33 +43,33 @@ class UserData:
 # Game loop
 def main():
     # Load / create UserData object
-    userdata = None
+    user_data = None
     try:
         with open(USERDATA_FILE, 'rb') as f:
-            userdata = pickle.load(f)
+            user_data = pickle.load(f)
 
             # Reset these variables
-            userdata.title_selected = 0
-            userdata.options_scene_selected = 0
+            user_data.title_selected = 0
+            user_data.options_scene_selected = 0
 
     except FileNotFoundError:
-        userdata = UserData()
+        user_data = UserData()
 
     # Play music
     pygame.mixer.music.load(SFX_DIR / "8bit_ost.ogg")
     pygame.mixer.music.play(-1)
-    pygame.mixer.music.set_volume(userdata.music_vol)
+    pygame.mixer.music.set_volume(user_data.music_vol)
 
     # Set windows flags
     window_flags = HWACCEL | DOUBLEBUF
-    if userdata.is_fullscreen:
+    if user_data.is_fullscreen:
         window_flags = window_flags | FULLSCREEN
-    if userdata.is_frameless:
+    if user_data.is_frameless:
         window_flags = window_flags | NOFRAME
 
     # Initialize the window
     window = None
-    if userdata.is_fullscreen:
+    if user_data.is_fullscreen:
         window = pygame.display.set_mode((pygame.display.Info().current_w, pygame.display.Info().current_h),
                                          window_flags)
     else:
@@ -75,7 +78,12 @@ def main():
         window = pygame.display.set_mode((w, h), window_flags)
 
     pygame.display.set_caption(TITLE)
+    pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))
     pygame.mouse.set_visible(False)
+
+    # Create a scene manager
+
+    # Create Render target
 
     # Loop variables
     clock = pygame.time.Clock()
@@ -88,6 +96,8 @@ def main():
 
         # Lock FPS
         clock.tick(FPS)
+        if DEBUG_MODE:
+            pygame.display.set_caption(f"{TITLE} (FPS: {round(clock.get_fps(),2)})")
 
         # Calculate delta time
         now = time.time()
@@ -96,18 +106,25 @@ def main():
 
         # Check for QUIT event
         if pygame.event.get(QUIT):
+            # Save player settings
             try:
                 with open(USERDATA_FILE, 'wb') as f:
-                    pickle.dump(userdata, f)
+                    pickle.dump(user_data, f)
             except Exception as e:
                 print("Failed to save.")
                 print(e)
 
+            # Exit loop and function
             running = False
             return
 
+        # Call scene methods
+
+        # Draw screen
+
 
 if __name__ == "__main__":
+    # Run main
     main()
 
     pygame.quit()
