@@ -56,6 +56,10 @@ class TitleMenuWidget:
             self.act_opt[self.sel_i] = 0
             self.sel_i += 1
             self.act_opt[self.sel_i] = 1
+        else:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i = 0
+            self.act_opt[self.sel_i] = 1
 
     def get_selected(self):
         return self.sel_i
