@@ -6,8 +6,10 @@ import time
 from pygame.locals import *
 
 from data.engine.defines import *
+from data.engine.scenes import *
 from data.engine.funcs import (
-    load_img,
+    load_image,
+    SceneManager,
 )
 
 os.environ["SDL_VIDEO_CENTERED"] = "1"
@@ -78,12 +80,14 @@ def main():
         window = pygame.display.set_mode((w, h), window_flags)
 
     pygame.display.set_caption(TITLE)
-    pygame.display.set_icon(load_img("icon.png", IMG_DIR, 1))
+    pygame.display.set_icon(load_image("icon.png", IMG_DIR, 1))
     pygame.mouse.set_visible(False)
 
     # Create a scene manager
+    manager = SceneManager(TitleScene(user_data))
 
     # Create Render target
+    render_target = pygame.Surface((WIN_RES["w"], WIN_RES["h"]))
 
     # Loop variables
     clock = pygame.time.Clock()
@@ -119,9 +123,24 @@ def main():
             return
 
         # Call scene methods
+        manager.scene.handle_events(pygame.event.get())
+        manager.scene.update(dt)
+        manager.scene.draw(render_target)
 
         # Draw screen
+        if (window_flags & FULLSCREEN) != 0:
+            yscale = window.get_height() / WIN_RES["h"]
+            xscale = window.get_width() / WIN_RES["w"]
+            targety = int(WIN_RES["h"] * yscale)
+            targetx = int(targety*2/3)
 
+            window.blit(pygame.transform.scale(render_target, (targetx, targety)),
+                        (window.get_width() / 2 - targetx / 2, 0))
+
+        else:
+            window.blit(pygame.transform.scale(render_target, (window.get_width(), window.get_height())), (0, 0))
+
+        pygame.display.flip()
 
 if __name__ == "__main__":
     # Run main

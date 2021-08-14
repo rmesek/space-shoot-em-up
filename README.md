@@ -6,4 +6,6 @@
 
 OST: Night Shade by [AdhesiveWombat](https://www.youtube.com/c/AdhesiveWombat)
 
+Code used [Star-Fighter by zyenapz](https://github.com/zyenapz/Star-Fighter)
+
 [Short overview of project]
