@@ -21,7 +21,7 @@ pygame.mixer.init()
 # Player Preferences
 class UserData:
     def __init__(self):
-        self.is_fullscreen = False
+        self.is_fullscreen = True
         self.is_frameless = False
         self.music_vol = 0.40
         self.sfx_vol = 0.30
@@ -129,18 +129,24 @@ def main():
 
         # Draw screen
         if (window_flags & FULLSCREEN) != 0:
-            yscale = window.get_height() / WIN_RES["h"]
-            xscale = window.get_width() / WIN_RES["w"]
-            targety = int(WIN_RES["h"] * yscale)
-            targetx = int(targety*2/3)
+            if window.get_height() <= window.get_width():
+                yscale = window.get_height() / WIN_RES["h"]
+                targety = int(WIN_RES["h"] * yscale)
+                targetx = int(targety*2/3)
+            else:
+                xscale = window.get_width() / WIN_RES["w"]
+                targetx = int(WIN_RES["w"] * xscale)
+                targety = int(targetx*3/2)
 
             window.blit(pygame.transform.scale(render_target, (targetx, targety)),
-                        (window.get_width() / 2 - targetx / 2, 0))
+                        (window.get_width() / 2 - targetx / 2,
+                         window.get_height() / 2 - targety / 2))
 
         else:
             window.blit(pygame.transform.scale(render_target, (window.get_width(), window.get_height())), (0, 0))
 
         pygame.display.flip()
+
 
 if __name__ == "__main__":
     # Run main
