@@ -21,7 +21,7 @@ pygame.mixer.init()
 # Player Preferences
 class UserData:
     def __init__(self):
-        self.is_fullscreen = True
+        self.is_fullscreen = False
         self.is_frameless = False
         self.music_vol = 0.40
         self.sfx_vol = 0.30

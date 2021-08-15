@@ -52,6 +52,7 @@ def draw_background(surf, img, img_rect, ypos):
     if rel_y < surf_h:
         surf.blit(img, (0, rel_y))
 
+
 def draw_text(surf, text, size, font, x, y, color, align="normal"):
     font = pygame.font.Font(font, size)
     text_surface = font.render(text, True, color)
