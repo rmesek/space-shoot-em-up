@@ -52,6 +52,24 @@ class TitleScene:  # class TitleScene(Scene):
                     self.title_menu.select_down()
                     self.sfx_keypress.play()
 
+                elif event.key == self.user_data.key_fire or event.key == pygame.K_RETURN:
+                    self.sfx_keypress.play() # Play key press sound
+
+                    if self.title_menu.get_selected() == 0:
+                        pass
+
+                    elif self.title_menu.get_selected() == 1:
+                        pass
+
+                    elif self.title_menu.get_selected() == 2:
+                        pass
+
+                    elif self.title_menu.get_selected() == 3:
+                        pass
+
+                    elif self.title_menu.get_selected() == 4:
+                        self.exit = True
+
     def update(self, dt):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt

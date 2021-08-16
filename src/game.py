@@ -109,7 +109,8 @@ def main():
         prev_time = now
 
         # Check for QUIT event
-        if pygame.event.get(QUIT):
+        if pygame.event.get(QUIT) or \
+                (type(manager.scene) == TitleScene and manager.scene.exit):
             # Save player settings
             try:
                 with open(USERDATA_FILE, 'wb') as f:
