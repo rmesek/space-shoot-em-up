@@ -568,3 +568,102 @@ class SoundOptionsSceneMenuWidget:
 
     def get_max_index(self):
         return self.MAX_OPTIONS - 1
+
+
+class GameOptionsSceneMenuWidget:
+    def __init__(self, user_data):
+        self.user_data = user_data
+
+        self.image = pygame.Surface((WIN_RES["w"], 350))
+        x_alignment = self.image.get_width() * 0.30
+        btn_x_size = 128
+
+        # Options
+        self.ts_hp_y = 16
+        self.ts_canpause_y = 64
+        self.ts_hp = TextSelector(self.user_data.hp_pref, HP_OPTIONS, (x_alignment, self.ts_hp_y), alignment="CENTER",
+                                  active=True)
+        self.ts_canpause = TextSelector(self.user_data.can_pause, YESNO_OPTIONS, (x_alignment, self.ts_canpause_y),
+                                        alignment="CENTER")
+        self.btn_back = Button("BACK", (btn_x_size, 32),
+                               (self.image.get_width() / 2 - btn_x_size / 2, self.image.get_height() * 0.7))
+
+        # Options list
+        self.options = (
+            self.ts_hp,
+            self.ts_canpause,
+            self.btn_back  # Note: Back buttons should always be put at the last index of an options list
+        )
+        self.MAX_OPTIONS = len(self.options)
+        self.index = 0
+
+    def update(self):
+        for option in self.options:
+            option.update()
+
+        # Update preferences
+        self.user_data.hp_pref = self.ts_hp.get_selected()
+        self.user_data.can_pause = self.ts_canpause.get_selected()
+
+    def draw(self, window):
+        self.image.fill("BLACK")
+        self.image.set_colorkey("BLACK")
+
+        # Draw Labels
+        draw_text2(self.image, "HP BAR STYLE", FONT_FILE, FONT_SIZE, (32, self.ts_hp_y + FONT_SIZE/2), "WHITE")
+        draw_text2(self.image, "CAN PAUSE", FONT_FILE, FONT_SIZE, (32, self.ts_canpause_y + FONT_SIZE/2), "WHITE")
+
+        # Draw text selectors
+        for option in self.options:
+            option.draw(self.image)
+
+        # Draw the widget to the screen
+        window.blit(self.image, (0, window.get_height()*0.3))
+
+    def select_up(self):
+        # Deactivate current text selector
+        selected_option = self.options[self.index]
+        selected_option.deactivate()
+
+        # Move current text selector
+        if self.index <= 0:
+            self.index = self.MAX_OPTIONS - 1
+        else:
+            self.index -= 1
+
+        # Activate current text selector
+        selected_option = self.options[self.index]
+        selected_option.activate()
+
+    def select_down(self):
+        # Deactivate current text selector
+        selected_option = self.options[self.index]
+        selected_option.deactivate()
+
+        # Move current text selector
+        if self.index >= self.MAX_OPTIONS - 1:
+            self.index = 0
+        else:
+            self.index += 1
+
+        # Activate current text selector
+        selected_option = self.options[self.index]
+        selected_option.activate()
+
+    def select_left(self):
+        selected_option = self.options[self.index]
+        option_type = type(selected_option)
+        if option_type == TextSelector:
+            selected_option.go_left()
+
+    def select_right(self):
+        selected_option = self.options[self.index]
+        option_type = type(selected_option)
+        if option_type == TextSelector:
+            selected_option.go_right()
+
+    def get_selected(self):
+        return self.index
+
+    def get_max_index(self):
+        return self.MAX_OPTIONS - 1

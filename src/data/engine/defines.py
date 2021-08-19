@@ -6,6 +6,7 @@ TITLE = "Space Shoot 'em up"
 VERSION = "0.4"
 
 # GAME OPTIONS
+HP_OPTIONS = ("CIRCLE", "SQUARE")
 YESNO_OPTIONS = ("NO", "YES")
 SFX_RANGE = (0, 100)
 MUSIC_RANGE = (0, 100)
