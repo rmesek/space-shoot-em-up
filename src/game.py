@@ -21,6 +21,8 @@ pygame.mixer.init()
 # Player Preferences
 class UserData:
     def __init__(self):
+        self.FPS = 60
+        self.DEBUG_MODE = False
         self.is_fullscreen = False
         self.is_frameless = False
         self.music_vol = 0.40
@@ -99,8 +101,8 @@ def main():
         window.fill("BLACK")
 
         # Lock FPS
-        clock.tick(FPS)
-        if DEBUG_MODE:
+        clock.tick(user_data.FPS)
+        if user_data.DEBUG_MODE:
             pygame.display.set_caption(f"{TITLE} (FPS: {round(clock.get_fps(),2)})")
 
         # Calculate delta time

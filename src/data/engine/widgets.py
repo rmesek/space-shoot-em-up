@@ -581,10 +581,14 @@ class GameOptionsSceneMenuWidget:
         # Options
         self.ts_hp_y = 16
         self.ts_canpause_y = 64
+        self.rs_fps_y = 112
+        self.ts_debug_y = 160
         self.ts_hp = TextSelector(self.user_data.hp_pref, HP_OPTIONS, (x_alignment, self.ts_hp_y), alignment="CENTER",
                                   active=True)
         self.ts_canpause = TextSelector(self.user_data.can_pause, YESNO_OPTIONS, (x_alignment, self.ts_canpause_y),
                                         alignment="CENTER")
+        self.ts_debug = TextSelector(self.user_data.DEBUG_MODE, YESNO_OPTIONS, (x_alignment, self.ts_debug_y),
+                                     alignment="CENTER")
         self.btn_back = Button("BACK", (btn_x_size, 32),
                                (self.image.get_width() / 2 - btn_x_size / 2, self.image.get_height() * 0.7))
 
@@ -592,6 +596,7 @@ class GameOptionsSceneMenuWidget:
         self.options = (
             self.ts_hp,
             self.ts_canpause,
+            self.ts_debug,
             self.btn_back  # Note: Back buttons should always be put at the last index of an options list
         )
         self.MAX_OPTIONS = len(self.options)
@@ -604,6 +609,7 @@ class GameOptionsSceneMenuWidget:
         # Update preferences
         self.user_data.hp_pref = self.ts_hp.get_selected()
         self.user_data.can_pause = self.ts_canpause.get_selected()
+        self.user_data.DEBUG_MODE = self.ts_debug.get_selected()
 
     def draw(self, window):
         self.image.fill("BLACK")
@@ -612,6 +618,7 @@ class GameOptionsSceneMenuWidget:
         # Draw Labels
         draw_text2(self.image, "HP BAR STYLE", FONT_FILE, FONT_SIZE, (32, self.ts_hp_y + FONT_SIZE/2), "WHITE")
         draw_text2(self.image, "CAN PAUSE", FONT_FILE, FONT_SIZE, (32, self.ts_canpause_y + FONT_SIZE/2), "WHITE")
+        draw_text2(self.image, "DEBUG MODE", FONT_FILE, FONT_SIZE, (32, self.ts_debug_y + FONT_SIZE / 2), "WHITE")
 
         # Draw text selectors
         for option in self.options:
