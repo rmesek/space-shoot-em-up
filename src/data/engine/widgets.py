@@ -411,7 +411,7 @@ class RangeSelector:
 
         if self.active:
             # Draw the arrows
-            if self.value > 0:
+            if self.value > self.min_:
                 draw_text2(self.ts_surf, "<", FONT_FILE, FONT_SIZE,
                            (FONT_SIZE / 2 - (2 * self.jut_m),
                             self.ts_surf.get_height() / 2 - FONT_SIZE / 2),
@@ -439,7 +439,7 @@ class RangeSelector:
 
     def decrease(self):
         if self.value <= self.min_:
-            self.value = 0
+            self.value = self.min_
         else:
             self.value -= 1
 
@@ -587,6 +587,11 @@ class GameOptionsSceneMenuWidget:
                                   active=True)
         self.ts_canpause = TextSelector(self.user_data.can_pause, YESNO_OPTIONS, (x_alignment, self.ts_canpause_y),
                                         alignment="CENTER")
+        FPS_LIMIT = FPS_RANGE
+        if self.user_data.DEBUG_MODE:
+            FPS_LIMIT = (1, 1000)
+        self.rs_fps = RangeSelector(self.user_data.FPS, FPS_LIMIT, (x_alignment, self.rs_fps_y),
+                                    alignment="CENTER")
         self.ts_debug = TextSelector(self.user_data.DEBUG_MODE, YESNO_OPTIONS, (x_alignment, self.ts_debug_y),
                                      alignment="CENTER")
         self.btn_back = Button("BACK", (btn_x_size, 32),
@@ -596,6 +601,7 @@ class GameOptionsSceneMenuWidget:
         self.options = (
             self.ts_hp,
             self.ts_canpause,
+            self.rs_fps,
             self.ts_debug,
             self.btn_back  # Note: Back buttons should always be put at the last index of an options list
         )
@@ -609,6 +615,7 @@ class GameOptionsSceneMenuWidget:
         # Update preferences
         self.user_data.hp_pref = self.ts_hp.get_selected()
         self.user_data.can_pause = self.ts_canpause.get_selected()
+        self.user_data.FPS = self.rs_fps.get_value()
         self.user_data.DEBUG_MODE = self.ts_debug.get_selected()
 
     def draw(self, window):
@@ -618,6 +625,7 @@ class GameOptionsSceneMenuWidget:
         # Draw Labels
         draw_text2(self.image, "HP BAR STYLE", FONT_FILE, FONT_SIZE, (32, self.ts_hp_y + FONT_SIZE/2), "WHITE")
         draw_text2(self.image, "CAN PAUSE", FONT_FILE, FONT_SIZE, (32, self.ts_canpause_y + FONT_SIZE/2), "WHITE")
+        draw_text2(self.image, "FPS LIMIT", FONT_FILE, FONT_SIZE, (32, self.rs_fps_y + FONT_SIZE / 2), "WHITE")
         draw_text2(self.image, "DEBUG MODE", FONT_FILE, FONT_SIZE, (32, self.ts_debug_y + FONT_SIZE / 2), "WHITE")
 
         # Draw text selectors
@@ -662,12 +670,18 @@ class GameOptionsSceneMenuWidget:
         option_type = type(selected_option)
         if option_type == TextSelector:
             selected_option.go_left()
+        elif option_type == RangeSelector:
+            # Decrease value
+            selected_option.decrease()
 
     def select_right(self):
         selected_option = self.options[self.index]
         option_type = type(selected_option)
         if option_type == TextSelector:
             selected_option.go_right()
+        elif option_type == RangeSelector:
+            # Increase value
+            selected_option.increase()
 
     def get_selected(self):
         return self.index

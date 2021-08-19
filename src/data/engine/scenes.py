@@ -172,7 +172,7 @@ class OptionsScene:
         draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
-        draw_text2(window, "OPTIONS", FONT_FILE, FONT_SIZE*2, (WIN_RES["w"]/2, 64), "WHITE", "center")
+        draw_text2(window, "OPTIONS", FONT_FILE, FONT_SIZE * 2, (WIN_RES["w"] / 2, 64), "WHITE", "center")
         self.menu_widget.draw(window)
 
 
@@ -236,7 +236,7 @@ class VideoOptionsScene:
         draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
-        draw_text2(window, "VIDEO OPTIONS", FONT_FILE, FONT_SIZE*2, (WIN_RES["w"]/2, 64), "WHITE", "center")
+        draw_text2(window, "VIDEO OPTIONS", FONT_FILE, FONT_SIZE * 2, (WIN_RES["w"] / 2, 64), "WHITE", "center")
         self.menu_widget.draw(window)
 
 
@@ -315,7 +315,7 @@ class SoundOptionsScene:
         draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
-        draw_text2(window, "SOUND OPTIONS", FONT_FILE, FONT_SIZE*2, (WIN_RES["w"]/2, 64), "WHITE", "center")
+        draw_text2(window, "SOUND OPTIONS", FONT_FILE, FONT_SIZE * 2, (WIN_RES["w"] / 2, 64), "WHITE", "center")
         self.menu_widget.draw(window)
 
 
@@ -334,6 +334,10 @@ class GameOptionsScene:
 
         # Menu widget
         self.menu_widget = GameOptionsSceneMenuWidget(self.user_data)
+
+        # Key press delay
+        self.press_timer = pygame.time.get_ticks()
+        self.press_delay = 30
 
         # Sounds
         self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.user_data.sfx_vol)
@@ -367,6 +371,21 @@ class GameOptionsScene:
                     self.sfx_keypress.play()
                     self.menu_widget.select_right()
 
+        # Only when FPS LIMIT is selected
+        if self.menu_widget.get_selected() == 2 \
+                and self.user_data.FPS not in COMMON_FPS:  # STOP ON COMMON REFRESH RATES
+            # FPS selector key presses
+            now = pygame.time.get_ticks()
+            if now - self.press_timer > self.press_delay:
+                self.press_timer = now
+
+                pressed = pygame.key.get_pressed()
+                if pressed[self.user_data.key_left]:
+                    self.menu_widget.select_left()
+
+                elif pressed[self.user_data.key_right]:
+                    self.menu_widget.select_right()
+
     def update(self, dt):
         self.bg_y += BG_SPD * dt
         self.par_y += PAR_SPD * dt
@@ -377,5 +396,5 @@ class GameOptionsScene:
         draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
-        draw_text2(window, "GAME OPTIONS", FONT_FILE, FONT_SIZE*2, (WIN_RES["w"]/2, 64), "WHITE", "center")
+        draw_text2(window, "GAME OPTIONS", FONT_FILE, FONT_SIZE * 2, (WIN_RES["w"] / 2, 64), "WHITE", "center")
         self.menu_widget.draw(window)
