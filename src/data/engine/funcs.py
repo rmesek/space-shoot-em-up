@@ -64,3 +64,29 @@ def draw_text(surf, text, size, font, x, y, color, align="normal"):
         text_rect.x = x
         text.rect.y = y
     surf.blit(text_surface, (text_rect.x, text_rect.y))
+
+
+def draw_text2(surf, text, font, font_size, position, color, align="normal", italic=False):
+    # Just a function with slightly better argument formatting and functionalities
+
+    # Create Font object
+    font = pygame.font.Font(font, font_size)
+
+    # Italic settings
+    if italic:
+        font.italic = True
+
+    # Create surface
+    text_surface = font.render(text, True, color)
+
+    # Find dest
+    dest = [0, 0]
+    if align == "normal":
+        dest[0] = position[0]
+        dest[1] = position[1]
+    elif align == "center":
+        dest[0] = surf.get_width() / 2 - text_surface.get_width() / 2
+        dest[1] = position[1]
+
+    # Display text on surface
+    surf.blit(text_surface, dest)

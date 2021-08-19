@@ -7,12 +7,14 @@ from .funcs import (
     load_sound,
     draw_background,
     SceneManager,
+    draw_text
 )
 
 
 # TITLE SCENE
 class TitleScene:  # class TitleScene(Scene):
     def __init__(self, user_data):
+        self.manager = None
         # Player preferences
         self.user_data = user_data
 
@@ -103,6 +105,7 @@ class TitleScene:  # class TitleScene(Scene):
 
 class OptionsScene:
     def __init__(self, user_data):
+        self.manager = None
         self.user_data = user_data
 
         # Background
@@ -142,7 +145,7 @@ class OptionsScene:
 
                     if self.menu_widget.get_selected_str() == "VIDEO":
                         self.user_data.options_scene_selected = 0
-                        # go_to(VideoOptionsScene(self.user_data)
+                        self.manager.go_to(VideoOptionsScene(self.user_data))
 
                     elif self.menu_widget.get_selected_str() == "SOUND":
                         self.user_data.options_scene_selected = 1
@@ -167,5 +170,69 @@ class OptionsScene:
         draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
         draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
 
-        draw_text(window, "OPTIONS", FONT_SIZE*2, FONT_FILE, WIN_RES["w"]/2, 64, "WHITE", "centered")
+        draw_text2(window, "OPTIONS", FONT_FILE, FONT_SIZE*2, (WIN_RES["w"]/2, 64), "WHITE", "center")
+        self.menu_widget.draw(window)
+
+
+class VideoOptionsScene:
+    def __init__(self, user_data):
+        self.manager = None
+        self.user_data = user_data
+
+        # Background
+        self.BG_IMG = load_image("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.BG_IMG.get_rect()
+        self.bg_y = 0
+        self.PAR_IMG = load_image("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.BG_IMG.get_rect()
+        self.par_y = 0
+
+        # Menu widget
+        self.menu_widget = VideoOptionsSceneMenuWidget(self.user_data)
+
+        # Sounds
+        self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.user_data.sfx_vol)
+
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+
+                # Key press events
+                if event.key == self.user_data.key_fire or event.key == pygame.K_RETURN:
+                    self.sfx_keypress.play()  # Play key press sound
+
+                    if self.menu_widget.get_selected() == self.menu_widget.get_max_index():
+                        self.manager.go_to(OptionsScene(self.user_data))
+
+                elif event.key == self.user_data.key_back:
+                    self.sfx_keypress.play()
+                    self.manager.go_to(OptionsScene(self.user_data))
+
+                elif event.key == self.user_data.key_up:
+                    self.sfx_keypress.play()
+                    self.menu_widget.select_up()
+
+                elif event.key == self.user_data.key_down:
+                    self.sfx_keypress.play()
+                    self.menu_widget.select_down()
+
+                elif event.key == self.user_data.key_left:
+                    self.sfx_keypress.play()
+                    self.menu_widget.select_left()
+
+                elif event.key == self.user_data.key_right:
+                    self.sfx_keypress.play()
+                    self.menu_widget.select_right()
+
+    def update(self, dt):
+        self.bg_y += BG_SPD * dt
+        self.par_y += PAR_SPD * dt
+
+        self.menu_widget.update()
+
+    def draw(self, window):
+        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
+
+        draw_text2(window, "VIDEO OPTIONS", FONT_FILE, FONT_SIZE*2, (WIN_RES["w"]/2, 64), "WHITE", "center")
         self.menu_widget.draw(window)

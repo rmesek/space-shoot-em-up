@@ -5,6 +5,11 @@ WIN_RES = {"w": 320, "h": 480}
 TITLE = "Space Shoot 'em up"
 VERSION = "0.1"
 
+# GAME OPTIONS
+YESNO_OPTIONS = ("NO", "YES")
+SFX_RANGE = (0, 100)
+MUSIC_RANGE = (0, 100)
+
 # DIRECTORIES
 GAME_DIR = Path(__file__).parents[3]
 SRC_DIR = GAME_DIR / "src"
