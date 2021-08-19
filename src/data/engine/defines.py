@@ -3,7 +3,7 @@ from pathlib import Path
 # WINDOW AND METADATA DEFINES
 WIN_RES = {"w": 320, "h": 480}
 TITLE = "Space Shoot 'em up"
-VERSION = "0.1"
+VERSION = "0.4"
 
 # GAME OPTIONS
 YESNO_OPTIONS = ("NO", "YES")
