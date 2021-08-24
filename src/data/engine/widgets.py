@@ -623,8 +623,8 @@ class GameOptionsSceneMenuWidget:
         self.image.set_colorkey("BLACK")
 
         # Draw Labels
-        draw_text2(self.image, "HP BAR STYLE", FONT_FILE, FONT_SIZE, (32, self.ts_hp_y + FONT_SIZE/2), "WHITE")
-        draw_text2(self.image, "CAN PAUSE", FONT_FILE, FONT_SIZE, (32, self.ts_canpause_y + FONT_SIZE/2), "WHITE")
+        draw_text2(self.image, "HP BAR STYLE", FONT_FILE, FONT_SIZE, (32, self.ts_hp_y + FONT_SIZE / 2), "WHITE")
+        draw_text2(self.image, "CAN PAUSE", FONT_FILE, FONT_SIZE, (32, self.ts_canpause_y + FONT_SIZE / 2), "WHITE")
         draw_text2(self.image, "FPS LIMIT", FONT_FILE, FONT_SIZE, (32, self.rs_fps_y + FONT_SIZE / 2), "WHITE")
         draw_text2(self.image, "DEBUG MODE", FONT_FILE, FONT_SIZE, (32, self.ts_debug_y + FONT_SIZE / 2), "WHITE")
 
@@ -633,7 +633,7 @@ class GameOptionsSceneMenuWidget:
             option.draw(self.image)
 
         # Draw the widget to the screen
-        window.blit(self.image, (0, window.get_height()*0.3))
+        window.blit(self.image, (0, window.get_height() * 0.3))
 
     def select_up(self):
         # Deactivate current text selector
@@ -688,3 +688,92 @@ class GameOptionsSceneMenuWidget:
 
     def get_max_index(self):
         return self.MAX_OPTIONS - 1
+
+
+class DifficultyMenuWidget:
+    def __init__(self, init_selected):
+        # Surface
+        # Warning - options may go beyond the surface and will be not rendered
+        self.surface = pygame.Surface((WIN_RES["w"], 350))
+        self.surf_rect = self.surface.get_rect()
+
+        self.spacing = FONT_SIZE
+
+        # Menu
+        self.options = ("LENIENT", "FAIR", "CRUEL", "BACK")
+        self.act_opt = [0 for _ in range(len(self.options))]  # Active options
+        self.act_opt[init_selected] = 1
+        self.colors = {0: "white", 1: "black"}  # Colors for active/inactive menu
+
+        # Selector
+        self.selector = pygame.Surface((WIN_RES["w"], FONT_SIZE + 4))
+        self.selector.fill("white")
+        self.sel_y = FONT_SIZE + self.spacing
+        self.sel_i = init_selected  # index
+
+        # Back button
+        self.back_button = pygame.Surface((128, 32))
+
+    def update(self):
+        self.sel_y = FONT_SIZE * (self.sel_i + 1) + self.spacing * (self.sel_i + 1)
+
+    def draw(self, window):
+        self.back_button.fill("BLACK")
+        self.back_button.set_colorkey("BLACK")
+        self.surface.fill("black")
+        self.surface.set_colorkey("black")
+
+        # Change selector size and draw
+        if self.options[self.sel_i] != "BACK":
+            self.selector = pygame.Surface((WIN_RES["w"], FONT_SIZE + 4))
+            self.selector.fill("white")
+            self.surface.blit(self.selector, (0, self.sel_y - 3))
+        else:
+            self.selector = pygame.Surface((128, 32))
+            self.selector.fill("white")
+            self.back_button.blit(
+                self.selector,
+                (0, 0)
+            )
+
+        # Draw menu
+        for i in range(len(self.options)):
+            if self.options[i] != "BACK":
+                draw_text2(self.surface, self.options[i], FONT_FILE, FONT_SIZE,
+                           (self.surf_rect.centerx,
+                            FONT_SIZE * (i + 1) + self.spacing * (i + 1)),
+                           self.colors[self.act_opt[i]], "center")
+            else:
+                draw_text2(self.back_button, "BACK", FONT_FILE, FONT_SIZE,
+                           (self.back_button.get_width() / 2, self.back_button.get_height() / 2 - FONT_SIZE / 2),
+                           self.colors[self.act_opt[i]], align="center")
+                window.blit(self.back_button,
+                            (window.get_width() / 2 - self.back_button.get_width() / 2, window.get_height() * 0.8))
+
+        window.blit(self.surface, (0, window.get_height() / 2 - 32))
+
+    def select_up(self):
+        if self.sel_i > 0:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i -= 1
+            self.act_opt[self.sel_i] = 1
+        else:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i = len(self.options) - 1
+            self.act_opt[self.sel_i] = 1
+
+    def select_down(self):
+        if self.sel_i < len(self.options) - 1:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i += 1
+            self.act_opt[self.sel_i] = 1
+        else:
+            self.act_opt[self.sel_i] = 0
+            self.sel_i = 0
+            self.act_opt[self.sel_i] = 1
+
+    def get_selected(self):
+        return self.sel_i
+
+    def get_selected_str(self):
+        return self.options[self.sel_i]

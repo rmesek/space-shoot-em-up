@@ -90,3 +90,21 @@ def draw_text2(surf, text, font, font_size, position, color, align="normal", ita
 
     # Display text on surface
     surf.blit(text_surface, dest)
+
+
+def image_at(spritesheet, rectangle, convert_alpha=False):
+    # Code stolen from the pygame wiki and modified for personal use. The boons of open source!
+    rect = pygame.Rect(rectangle)
+    if not convert_alpha:
+        image = pygame.Surface(rect.size).convert()
+        image.blit(spritesheet, (0, 0), rect)
+    else:
+        image = pygame.Surface(rect.size).convert_alpha()
+        image.blit(spritesheet, (0, 0), rect)
+        image.set_colorkey("BLACK")
+    return image
+
+
+def scale_rect(scale, rect):
+    scaled = map((lambda x: x * scale), rect)
+    return tuple(scaled)

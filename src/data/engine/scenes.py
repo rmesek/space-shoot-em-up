@@ -4,6 +4,8 @@ from .defines import *
 from .widgets import *
 from .funcs import (
     load_image,
+    image_at,
+    scale_rect,
     load_sound,
     draw_background,
     SceneManager,
@@ -59,7 +61,7 @@ class TitleScene:  # class TitleScene(Scene):
                     self.sfx_keypress.play()  # Play key press sound
 
                     if self.title_menu.get_selected() == 0:
-                        pass
+                        self.manager.go_to(DifficultySelectionScene(self.user_data))
 
                     elif self.title_menu.get_selected() == 1:
                         pass
@@ -398,3 +400,77 @@ class GameOptionsScene:
 
         draw_text2(window, "GAME OPTIONS", FONT_FILE, FONT_SIZE * 2, (WIN_RES["w"] / 2, 64), "WHITE", "center")
         self.menu_widget.draw(window)
+
+
+class DifficultySelectionScene:
+    def __init__(self, user_data):
+        # Player preferences
+        self.user_data = user_data
+
+        # Background
+        self.BG_IMG = load_image("background.png", IMG_DIR, SCALE)
+        self.bg_rect = self.BG_IMG.get_rect()
+        self.bg_y = 0
+        self.PAR_IMG = load_image("background_parallax.png", IMG_DIR, SCALE)
+        self.par_rect = self.BG_IMG.get_rect()
+        self.par_y = 0
+
+        # Difficulty Menu widget
+        DEFAULT_SELECTED = 1
+        self.w_diffmenu = DifficultyMenuWidget(DEFAULT_SELECTED)
+        self.selected_diff = DEFAULT_SELECTED
+
+        # Difficulty icons
+        DIFFICULTY_SPRITESHEET = load_image("difficulty_sheet.png", IMG_DIR, SCALE * 2)
+        self.DIFFICULTY_ICONS = {
+            0: image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE * 2, [0, 0, 16, 16]), True),
+            1: image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE * 2, [0, 16, 16, 16]), True),
+            2: image_at(DIFFICULTY_SPRITESHEET, scale_rect(SCALE * 2, [0, 32, 16, 16]), True),
+        }
+
+        # Sounds
+        self.sfx_keypress = load_sound("sfx_keypress.wav", SFX_DIR, self.user_data.sfx_vol)
+
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == self.user_data.key_up:
+                    self.sfx_keypress.play()  # Play sound
+                    self.w_diffmenu.select_up()
+                    self.selected_diff = self.w_diffmenu.get_selected()
+
+                elif event.key == self.user_data.key_down:
+                    self.sfx_keypress.play()
+                    self.w_diffmenu.select_down()
+                    self.selected_diff = self.w_diffmenu.get_selected()
+
+                elif event.key == self.user_data.key_fire or event.key == pygame.K_RETURN:
+                    self.sfx_keypress.play()
+
+                    if self.w_diffmenu.get_selected_str() != "BACK":
+                        self.user_data.game_difficulty = self.selected_diff
+                        pass  # self.manager.go_to(GameScene(self.user_data))
+
+                    elif self.w_diffmenu.get_selected_str() == "BACK":
+                        self.manager.go_to(TitleScene(self.user_data))
+
+                elif event.key == self.user_data.key_back:
+                    self.sfx_keypress.play()
+                    self.manager.go_to(TitleScene(self.user_data))
+
+    def update(self, dt):
+        self.bg_y += BG_SPD * dt
+        self.par_y += PAR_SPD * dt
+
+        self.w_diffmenu.update()
+
+    def draw(self, window):
+        draw_background(window, self.BG_IMG, self.bg_rect, self.bg_y)
+        draw_background(window, self.PAR_IMG, self.par_rect, self.par_y)
+
+        draw_text2(window, "SELECT DIFFICULTY", FONT_FILE, FONT_SIZE * 2, (WIN_RES["w"] / 2, 64), "WHITE", "center")
+        if self.w_diffmenu.get_selected_str() != "BACK":
+            window.blit(self.DIFFICULTY_ICONS[self.selected_diff],
+                        (window.get_width() / 2 - self.DIFFICULTY_ICONS[self.selected_diff].get_width() / 2,
+                         window.get_height() * 0.30))
+        self.w_diffmenu.draw(window)
