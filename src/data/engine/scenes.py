@@ -405,6 +405,7 @@ class GameOptionsScene:
 class DifficultySelectionScene:
     def __init__(self, user_data):
         # Player preferences
+        self.manager = None
         self.user_data = user_data
 
         # Background
